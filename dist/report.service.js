@@ -10,20 +10,32 @@ exports.ReportService = void 0;
 const common_1 = require("@nestjs/common");
 const generate_docx_1 = require("./docx/generate-docx");
 const axios_1 = require("axios");
-const FormData = require("form-data");
 let ReportService = class ReportService {
     async generateDocx(data) {
         const docxBuffer = await (0, generate_docx_1.generateDocx)(data);
         return docxBuffer;
     }
     async convertToPDF(docxBuffer) {
-        const form = new FormData();
-        form.append('files', docxBuffer, 'report.docx');
-        const response = await axios_1.default.post('http://localhost:3001/forms/libreoffice/convert', form, {
-            headers: form.getHeaders(),
-            responseType: 'arraybuffer',
-        });
-        return response.data;
+        const maxRetries = 3;
+        let retries = 0;
+        while (retries < maxRetries) {
+            try {
+                const response = await axios_1.default.post('http://localhost:3000/convert', docxBuffer, {
+                    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' },
+                    responseType: 'arraybuffer',
+                    timeout: 10000,
+                });
+                return Buffer.from(response.data);
+            }
+            catch (error) {
+                console.error(`Error converting DOCX to PDF (attempt ${retries + 1}):`, error);
+                retries++;
+                if (retries >= maxRetries) {
+                    throw new Error('Failed to convert DOCX to PDF after multiple attempts');
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
     }
 };
 exports.ReportService = ReportService;
