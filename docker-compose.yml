@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: docx-pdf-converter-app
+    ports:
+      - "3000:3000"  # Exposing the NestJS app on port 3000
+    depends_on:
+      - gotenberg  # Ensuring Gotenberg starts before the NestJS app
+    volumes:
+      - ./:/usr/src/app  # Mount the project directory to the container
+    environment:
+      - NODE_ENV=development
+    command: npm run start:dev
+
+  gotenberg:
+    image: thecodingmachine/gotenberg:7
+    container_name: gotenberg
+    ports:
+      - "3001:3001"  # Exposing Gotenberg on port 3001
+    restart: always
