@@ -1,2 +1,2 @@
-declare function generateDocx(): Promise<Buffer>;
+declare function generateDocx(data: any): Promise<Buffer>;
 export { generateDocx };

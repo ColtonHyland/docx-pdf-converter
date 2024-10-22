@@ -6,13 +6,12 @@ import {
   Table,
   TableRow,
   TableCell,
-  TextRun,
   HeadingLevel,
   ImageRun,
 } from 'docx';
 
 // Function to generate a field report DOCX
-async function generateDocx() {
+async function generateDocx(data: any) {
   // Create a document
   const doc = new Document({
     sections: [
@@ -26,16 +25,16 @@ async function generateDocx() {
           }),
           // Subheader for project
           new Paragraph({
-            text: 'Project: Engineering Site Inspection',
+            text: `Project: ${data.project}`,
             heading: HeadingLevel.HEADING_1,
           }),
           // Date and inspector information
           new Paragraph({
-            text: 'Date: October 21, 2024',
+            text: `Date: ${data.date}`,
             heading: HeadingLevel.HEADING_2,
           }),
           new Paragraph({
-            text: 'Inspector: John Doe',
+            text: `Inspector: ${data.name}`,
             heading: HeadingLevel.HEADING_2,
           }),
           // Paragraph text
@@ -43,7 +42,7 @@ async function generateDocx() {
             text: 'Overview of the inspection site:',
           }),
           new Paragraph({
-            text: 'The inspection covered various aspects of the project, including structural integrity, material quality, and overall compliance with safety standards. The following observations were made.',
+            text: data.content,
           }),
 
           // Adding an image (replace the path with an actual image path)
@@ -124,7 +123,4 @@ async function generateDocx() {
   return buffer;
 }
 
-// Call the function to generate the .docx report
-generateDocx().catch((error) => console.error(error));
-
-export { generateDocx};
+export { generateDocx };

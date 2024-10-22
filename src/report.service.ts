@@ -5,8 +5,8 @@ import * as FormData from 'form-data';
 
 @Injectable()
 export class ReportService {
-  async generateDocx(): Promise<Buffer> {
-    const docxBuffer = await generateDocx();
+  async generateDocx(data: any): Promise<Buffer> {
+    const docxBuffer = await generateDocx(data);
     return docxBuffer;
   }
 
@@ -15,7 +15,7 @@ export class ReportService {
     form.append('files', docxBuffer, 'report.docx');
 
     const response = await axios.post(
-      'http://gotenberg:3001/forms/libreoffice/convert',
+      'http://localhost:3001/forms/libreoffice/convert',
       form,
       {
         headers: form.getHeaders(),

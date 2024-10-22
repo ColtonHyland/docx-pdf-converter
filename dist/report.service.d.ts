@@ -1,4 +1,4 @@
 export declare class ReportService {
-    generateDocx(): Promise<Buffer>;
+    generateDocx(data: any): Promise<Buffer>;
     convertToPDF(docxBuffer: Buffer): Promise<Buffer>;
 }

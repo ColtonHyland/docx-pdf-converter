@@ -12,14 +12,14 @@ const generate_docx_1 = require("./docx/generate-docx");
 const axios_1 = require("axios");
 const FormData = require("form-data");
 let ReportService = class ReportService {
-    async generateDocx() {
-        const docxBuffer = await (0, generate_docx_1.generateDocx)();
+    async generateDocx(data) {
+        const docxBuffer = await (0, generate_docx_1.generateDocx)(data);
         return docxBuffer;
     }
     async convertToPDF(docxBuffer) {
         const form = new FormData();
         form.append('files', docxBuffer, 'report.docx');
-        const response = await axios_1.default.post('http://gotenberg:3001/forms/libreoffice/convert', form, {
+        const response = await axios_1.default.post('http://localhost:3001/forms/libreoffice/convert', form, {
             headers: form.getHeaders(),
             responseType: 'arraybuffer',
         });

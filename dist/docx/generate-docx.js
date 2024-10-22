@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateDocx = generateDocx;
 const fs = require("fs");
 const docx_1 = require("docx");
-async function generateDocx() {
+async function generateDocx(data) {
     const doc = new docx_1.Document({
         sections: [
             {
@@ -14,22 +14,22 @@ async function generateDocx() {
                         heading: docx_1.HeadingLevel.TITLE,
                     }),
                     new docx_1.Paragraph({
-                        text: 'Project: Engineering Site Inspection',
+                        text: `Project: ${data.project}`,
                         heading: docx_1.HeadingLevel.HEADING_1,
                     }),
                     new docx_1.Paragraph({
-                        text: 'Date: October 21, 2024',
+                        text: `Date: ${data.date}`,
                         heading: docx_1.HeadingLevel.HEADING_2,
                     }),
                     new docx_1.Paragraph({
-                        text: 'Inspector: John Doe',
+                        text: `Inspector: ${data.name}`,
                         heading: docx_1.HeadingLevel.HEADING_2,
                     }),
                     new docx_1.Paragraph({
                         text: 'Overview of the inspection site:',
                     }),
                     new docx_1.Paragraph({
-                        text: 'The inspection covered various aspects of the project, including structural integrity, material quality, and overall compliance with safety standards. The following observations were made.',
+                        text: data.content,
                     }),
                     new docx_1.Paragraph({
                         children: [
@@ -100,5 +100,4 @@ async function generateDocx() {
     console.log('DOCX buffer created');
     return buffer;
 }
-generateDocx().catch((error) => console.error(error));
 //# sourceMappingURL=generate-docx.js.map
