@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import {
   Document,
   Packer,
@@ -10,25 +11,20 @@ import {
   ImageRun,
 } from 'docx';
 
-// Function to generate a field report DOCX
 async function generateDocx(data: any) {
-  // Create a document
   const doc = new Document({
     sections: [
       {
         properties: {},
         children: [
-          // Title
           new Paragraph({
             text: 'Field Report',
             heading: HeadingLevel.TITLE,
           }),
-          // Subheader for project
           new Paragraph({
             text: `Project: ${data.project}`,
             heading: HeadingLevel.HEADING_1,
           }),
-          // Date and inspector information
           new Paragraph({
             text: `Date: ${data.date}`,
             heading: HeadingLevel.HEADING_2,
@@ -37,36 +33,35 @@ async function generateDocx(data: any) {
             text: `Inspector: ${data.name}`,
             heading: HeadingLevel.HEADING_2,
           }),
-          // Paragraph text
           new Paragraph({
             text: 'Overview of the inspection site:',
           }),
           new Paragraph({
             text: data.content,
           }),
+          ...(fs.existsSync(path.join(__dirname, 'images', 'image.jpg'))
+            ? [
+                new Paragraph({
+                  children: [
+                    new ImageRun({
+                      data: fs.readFileSync(path.join(__dirname, 'images', 'image.jpg')),
+                      transformation: {
+                        width: 200,
+                        height: 200,
+                      },
+                      type: 'jpg',
+                    }),
+                  ],
+                }),
+              ]
+            : []),
 
-          // Adding an image (replace the path with an actual image path)
-          new Paragraph({
-            children: [
-              new ImageRun({
-                data: fs.readFileSync('./image.webp'), // Replace with your image path
-                transformation: {
-                  width: 200,
-                  height: 200,
-                },
-                type: 'jpg', // Specify the image type
-              }),
-            ],
-          }),
-
-          // Add a table for inspection results
           new Paragraph({
             text: 'Inspection Results:',
             heading: HeadingLevel.HEADING_2,
           }),
           new Table({
             rows: [
-              // Table header row
               new TableRow({
                 children: [
                   new TableCell({
@@ -80,7 +75,6 @@ async function generateDocx(data: any) {
                   }),
                 ],
               }),
-              // First row
               new TableRow({
                 children: [
                   new TableCell({
@@ -94,7 +88,6 @@ async function generateDocx(data: any) {
                   }),
                 ],
               }),
-              // Second row
               new TableRow({
                 children: [
                   new TableCell({
@@ -117,7 +110,6 @@ async function generateDocx(data: any) {
     ],
   });
 
-  // Convert the document to a Buffer and save it as a .docx file
   const buffer = await Packer.toBuffer(doc);
   console.log('DOCX buffer created');
   return buffer;

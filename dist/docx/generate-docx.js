@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateDocx = generateDocx;
 const fs = require("fs");
+const path = require("path");
 const docx_1 = require("docx");
 async function generateDocx(data) {
     const doc = new docx_1.Document({
@@ -31,18 +32,22 @@ async function generateDocx(data) {
                     new docx_1.Paragraph({
                         text: data.content,
                     }),
-                    new docx_1.Paragraph({
-                        children: [
-                            new docx_1.ImageRun({
-                                data: fs.readFileSync('./image.webp'),
-                                transformation: {
-                                    width: 200,
-                                    height: 200,
-                                },
-                                type: 'jpg',
+                    ...(fs.existsSync(path.join(__dirname, 'images', 'image.jpg'))
+                        ? [
+                            new docx_1.Paragraph({
+                                children: [
+                                    new docx_1.ImageRun({
+                                        data: fs.readFileSync(path.join(__dirname, 'images', 'image.jpg')),
+                                        transformation: {
+                                            width: 200,
+                                            height: 200,
+                                        },
+                                        type: 'jpg',
+                                    }),
+                                ],
                             }),
-                        ],
-                    }),
+                        ]
+                        : []),
                     new docx_1.Paragraph({
                         text: 'Inspection Results:',
                         heading: docx_1.HeadingLevel.HEADING_2,
