@@ -8,26 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportService = void 0;
 const common_1 = require("@nestjs/common");
-const docx_1 = require("docx");
+const generate_docx_1 = require("./docx/generate-docx");
 const axios_1 = require("axios");
 const FormData = require("form-data");
 let ReportService = class ReportService {
-    async generateDocx(data) {
-        const doc = new docx_1.Document({
-            sections: [
-                {
-                    children: [
-                        new docx_1.Paragraph({
-                            children: [
-                                new docx_1.TextRun('JSON Data Output'),
-                                new docx_1.TextRun(JSON.stringify(data)),
-                            ],
-                        }),
-                    ],
-                },
-            ],
-        });
-        return await docx_1.Packer.toBuffer(doc);
+    async generateDocx() {
+        const docxBuffer = await (0, generate_docx_1.generateDocx)();
+        return docxBuffer;
     }
     async convertToPDF(docxBuffer) {
         const form = new FormData();

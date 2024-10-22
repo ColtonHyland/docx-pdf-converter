@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateDocx = generateDocx;
 const fs = require("fs");
 const docx_1 = require("docx");
 async function generateDocx() {
@@ -96,8 +97,8 @@ async function generateDocx() {
         ],
     });
     const buffer = await docx_1.Packer.toBuffer(doc);
-    fs.writeFileSync('FieldReport.docx', buffer);
-    console.log('FieldReport.docx created');
+    console.log('DOCX buffer created');
+    return buffer;
 }
 generateDocx().catch((error) => console.error(error));
 //# sourceMappingURL=generate-docx.js.map

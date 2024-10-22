@@ -120,9 +120,11 @@ async function generateDocx() {
 
   // Convert the document to a Buffer and save it as a .docx file
   const buffer = await Packer.toBuffer(doc);
-  fs.writeFileSync('FieldReport.docx', buffer);
-  console.log('FieldReport.docx created');
+  console.log('DOCX buffer created');
+  return buffer;
 }
 
 // Call the function to generate the .docx report
 generateDocx().catch((error) => console.error(error));
+
+export { generateDocx};
