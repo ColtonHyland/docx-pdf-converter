@@ -8,36 +8,30 @@ export class ReportController {
 
   constructor(private readonly reportService: ReportService) {}
 
-  @Post('generate/docx')
-  async generateDocx(@Body() data: any, @Res() res: Response) {
-    this.logger.log('Received request to generate DOCX report');
+  @Post('generate')
+  async generateReport(@Body() data: any, @Res() res: Response) {
+    this.logger.log('Received request to generate report');
     try {
+      // Generate DOCX file
+      this.logger.log('Generating DOCX');
       const docxBuffer = await this.reportService.generateDocx(data);
-      res.set({
-        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'Content-Disposition': 'attachment; filename=report.docx',
-      });
-      res.send(docxBuffer);
-    } catch (error) {
-      this.logger.error('Error generating DOCX report:', error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating DOCX report' });
-    }
-  }
+      this.logger.log('DOCX generated successfully');
 
-  @Post('generate/pdf')
-  async generatePdf(@Body() data: any, @Res() res: Response) {
-    this.logger.log('Received request to generate PDF report');
-    try {
-      const docxBuffer = await this.reportService.generateDocx(data);
+      // Convert DOCX to PDF using Gotenberg
+      this.logger.log('Converting DOCX to PDF');
       const pdfBuffer = await this.reportService.convertToPDF(docxBuffer);
-      res.set({
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename=report.pdf',
-      });
-      res.send(pdfBuffer);
+      this.logger.log('PDF converted successfully');
+
+      // Create a JSON response with base64 encoded files
+      const response = {
+        docx: docxBuffer.toString('base64'),
+        pdf: pdfBuffer.toString('base64')
+      };
+
+      res.json(response);
     } catch (error) {
-      this.logger.error('Error generating PDF report:', error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating PDF report' });
+      this.logger.error('Error generating report:', error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error generating report' });
     }
   }
 }
